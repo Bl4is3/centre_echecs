@@ -1,5 +1,7 @@
 class Player:
-    def __init__(self, first_name, last_name, date_birthday, sex, rank):
+    def __init__(self, id_player, first_name, last_name, date_birthday, sex,
+                                 rank):
+        self.id_player = id_player
         self.first_name = first_name
         self.last_name = last_name
         self.date_birthday = date_birthday
@@ -9,7 +11,7 @@ class Player:
     def __str__(self):
         """Used in print."""
         return (
-            f"{self.last_name.upper()} {self.first_name.title()} classé(e) {self.rank}"
+            f"{self.id_player} _ {self.last_name.upper()} {self.first_name.title()} classé(e) {self.rank}"
         )
 
     def __repr__(self):
