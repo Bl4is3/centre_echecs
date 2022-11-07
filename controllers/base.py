@@ -1,82 +1,98 @@
 """Define the main controller."""
 
 from models.player import Player
-from models.tournament import Tournament
+from views.view import View
+
+tournaments = []
+players = []
 
 
 class Controller:
     """Main controller."""
 
-    def __init__(self, deck: Player, view):
+    def __init__(self, view):
         """Has a deck, a list of players and a view."""
         # models
-        self.players: List[Player] = []
-        self.deck = deck
-
-        # views
         self.view = view
 
-    def get_players(self):
-        """Get some players."""
-        while len(self.players) < 5:  # nombre magique
-            name = self.view.prompt_for_player()
-            if not name:
-                return
-            player = Player(name)
-            self.players.append(player)
-
-    def evaluate_game(self):
-        """Evaluate the best player."""
-        last_player = self.players[0]
-        best_candidate = self.players[0]
-
-        for player in self.players[1:]:
-            player_card = player.hand[0]
-            last_player_card = last_player.hand[0]
-
-            if player_card > last_player_card:
-                best_candidate = player
-
-            last_player = player
-
-        return best_candidate.name
-
-    def rebuild_deck(self):
-        """Rebuild the deck."""
-        for player in self.players:
-            while player.hand:
-                card = player.hand.pop()
-                card.is_face_up = False
-                self.deck.append(card)
-        self.deck.shuffle()
+    def create_player(self, detail):
+        first_name = detail[0]
+        last_name = detail[1]
+        sex = detail[2]
+        date_birthday = detail[3]
+        rank = detail[4]
+        player = Player(first_name, last_name, sex, date_birthday, rank)
+        players.append(player)
 
     def start_game(self):
-        """Shuffle the deck and makes the players draw a card."""
-        self.deck.shuffle()
-        for player in self.players:
-            card = self.deck.draw_card()
-            if card:
-                player.hand.append(card)
+        ...
+
+    def sort_players_by_names(self):
+        names = []
+        for play in players:
+            names.append(play.first_name)
+        sorted_names = sorted(names)
+        sorted_player_by_names = []
+        for name in sorted_names:
+            for player in players:
+                if name == player.first_name:
+                    sorted_player_by_names.append(player)
+        return sorted_player_by_names
+
+    def sort_players_by_rank(self):
+        self.players = players
+        ranks = []
+        for player in players:
+            rank = player["rank"]
+            ranks.append(rank)
+        sorted_ranks = sorted(ranks)
+        sorted_player_by_ranks = []
+        for rank in sorted_ranks:
+            for player in players:
+                if rank == player["rank"]:
+                    sorted_player_by_ranks.append(player)
+        return sorted_player_by_ranks
 
     def run(self):
         """Run the game."""
-        self.get_players()
 
         running = True
+        choix = self.view.prompt_principal_menu()
         while running:
 
-            self.start_game()
-            for player in self.players:
-                self.view.show_player_hand(player.name, player.hand)
+            if choix == "1":
+                choix = self.view.afficher_menu_tournoi()
+            elif choix == "11":
+                choix = self.view.begin_tournament()
+            elif choix == "12":
+                choix = self.view.resume_tournament()
+            elif choix == "13":
+                listing = self.view.show_listing_tournaments()
+                choix = self.view.affichage_liste_joueurs_classement(listing)
+            elif choix == "16":
+                choix = self.view.prompt_principal_menu()
+            elif choix == "15":
+                return False
+            elif choix == "2":
+                choix = self.view.afficher_menu_joueur()
+            elif choix == "21":
+                detail = self.view.add_player()
+                self.create_player(detail)
+                choix = self.view.afficher_menu_joueur()
+            elif choix == "22":
+                listing = self.sort_players_by_names()
+                self.view.affichage_liste_joueurs_alphabetique(listing)
+                choix = self.view.afficher_menu_joueur()
+            elif choix == "23":
+                listing = self.sort_players_by_rank()
+                self.view.affichage_liste_joueurs_classement(listing)
+                choix = self.view.afficher_menu_joueur()
+            elif choix == "24":
+                choix = self.view.prompt_principal_menu()
+            elif choix == "3":
+                return False
+            else:
+                print("Ce choix n'existe pas, merci de recommencer")
+                choix = self.view.prompt_principal_menu()
 
-            self.view.prompt_for_flip_cards()
-            for player in self.players:
-                for card in player.hand:
-                    card.is_face_up = True
 
-                self.view.show_player_hand(player.name, player.hand)
-
-            self.view.show_winner(self.evaluate_game())
-            running = self.view.prompt_for_new_game()
-
-            self.rebuild_deck()

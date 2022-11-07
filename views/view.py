@@ -1,5 +1,6 @@
 """Base view"""
-from controllers.base import Controller
+
+
 
 class View:
     """creation des vues"""
@@ -10,45 +11,28 @@ class View:
             "Ajouter un joueur:\n"
             "-------------------------------\n"
         )
-        joueur = []
-        nom = input("Nom du joueur :")
-        joueur.append(nom)
-        prenom = input("Prénom du joueur :")
-        joueur.append(prenom)
-        sexe = input("H ou F :")
-        joueur.append(sexe)
-        date_naissance = input("Date de naissance :")
-        joueur.append(date_naissance)
-        classement = input("Classement :")
-        joueur.append(classement)
-        self.afficher_menu_joueur()
-        return joueur
+
+        first_name = input("Prénom du joueur :")
+        last_name = input("Nom du joueur :")
+        sex = input("H ou F :")
+        date_birthday = input("Date de naissance :")
+        rank = input("Classement :")
+        details = [first_name, last_name, sex, date_birthday, rank]
+        return details
 
     def afficher_menu_joueur(self):
         print(
             "-------------------------------\n"
             "Menu Joueur:\n"
             "-------------------------------\n"
-            "1 - Ajouter un joueur \n"
-            "2 - Afficher la liste des joueurs par alphabétique\n"
-            "3 - Afficher la liste des joueurs par classement\n"
-            "4 - Revenir au menu principal\n"
-            "5 - Sauvegarder et quitter\n"
+            "21 - Ajouter un joueur \n"
+            "22 - Afficher la liste des joueurs par alphabétique\n"
+            "23 - Afficher la liste des joueurs par classement\n"
+            "24 - Revenir au menu principal\n"
+            "25 - Sauvegarder et quitter\n"
         )
         choix = input("Entrez votre choix :")
-        if choix == "1":
-            self.add_player()
-        elif choix == "2":
-            self.affichage_liste_joueurs_alphabetique()
-        elif choix == "3":
-            self.affichage_liste_joueurs_classement()
-        elif choix == "4":
-            self.prompt_principal_menu()
-        elif choix == "5":
-            return
-        else:
-            print("Ce choix n'existe pas, merci de recommencer")
-            self.afficher_menu_joueur()
+        return choix
 
     def prompt_principal_menu(self):
         print(
@@ -62,46 +46,29 @@ class View:
             "3 - Sauvegarder et quitter\n"
         )
         choix = input("Entrez votre choix :")
-        if choix == "1":
-            self.afficher_menu_tournoi()
-        elif choix == "2":
-            self.afficher_menu_joueur()
-        else:
-            print("Ce choix n'existe pas, merci de recommencer")
-            self.prompt_principal_menu()
+        return choix
 
     def afficher_menu_tournoi(self):
         print(
             "-------------------------------\n"
             "Menu Tournoi:\n"
             "-------------------------------\n"
-            "1 - Créer un tournoi \n"
-            "2 - Afficher la liste de tous les tournois \n"
-            "3 - Afficher la liste de tous les tours d'un tournoi\n"
-            "4 - Afficher la liste de tous les matchs d'un tournoi\n"
-            "5 - Revenir au menu principal\n"
-            "6 - Sauvegarder et quitter\n"
+            "11 - Créer un tournoi \n"
+            "12 - Reprendre un tournoi en cours\n"
+            "13 - Afficher la liste de tous les tournois \n"
+            "14 - Afficher la liste de tous les tours d'un tournoi\n"
+            "15 - Afficher la liste de tous les matchs d'un tournoi\n"
+            "16 - Revenir au menu principal\n"
+            "17 - Sauvegarder et quitter\n"
         )
-        choix = input("Entrez votre choix :")
-        if choix == "1":
-            self.begin_tournament()
-        elif choix == "2":
-            self.affichage_liste_tournois()
-        elif choix == "3":
-            self.affichage_liste_tours_d_un_tournoi()
-        elif choix == "4":
-            self.affichage_liste_matchs_d_un_tournoi()
-        elif choix == "5":
-            self.prompt_principal_menu()
-        elif choix == "6":
-            return
-        else:
-            print("Ce choix n'existe pas, merci de recommencer")
-            self.afficher_menu_joueur()
 
-    def affichage_liste_joueurs_alphabetique(self):
-        print("coucou")
-        self.afficher_menu_joueur()
+        choix = input("Entrez votre choix :")
+        return choix
+
+    def affichage_liste_joueurs_alphabetique(self, players):
+        self.players = players
+        for player in players:
+            print(player)
 
     def affichage_liste_joueurs_classement(self):
         self.afficher_menu_joueur()

@@ -9,8 +9,7 @@ class Player:
     def __str__(self):
         """Used in print."""
         return (
-            f"{self.first_name} - {self.last_name} , {self.sex}, classé(e) "
-            f"{self.rank}"
+            f"{self.last_name.upper()} {self.first_name.title()} classé(e) {self.rank}"
         )
 
     def __repr__(self):
