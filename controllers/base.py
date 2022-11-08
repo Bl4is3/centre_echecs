@@ -41,6 +41,35 @@ class Controller:
         }
         self.id_player += 1
 
+    def serialized_player(self, detail):
+        player = Player(self.id_player, detail[0], detail[1], detail[2],
+                        detail[3], detail[4])
+        serialized_player = {
+            'id': player.id,
+            'first_name': player.first_name,
+            'last_name': player.last_name,
+            'sex': player.sex,
+            'date_birthday': player.date_birthday,
+            'rank': player.rank
+        }
+        return serialized_player
+
+    def unserialized_player(self, serialized_player):
+        id_player = serialized_player['id']
+        first_name = serialized_player['first_name']
+        last_name = serialized_player['last_name']
+        sex = serialized_player['sex']
+        date_birthday = serialized_player['date_birthday']
+        rank = serialized_player['rank']
+
+        return Player(
+            id_player,
+            first_name,
+            last_name,
+            sex,
+            date_birthday,
+            rank)
+
     def init_db(self):
         filename = r'db.json'
         fileobj = Path(filename)
@@ -61,6 +90,9 @@ class Controller:
         # tournaments_table = db.table('tournaments')
         # serialized_players = players_table.all()
         # serialized_tournaments = tournaments_table.all()
+
+    def add_to_db(self):
+        ...
 
     def start_tournament(self, detail):
         name = detail[0]
@@ -129,6 +161,7 @@ class Controller:
             elif choix == "21":
                 detail = self.view.add_player()
                 self.create_player(detail)
+                serialized_player = self.serialized_player(detail)
                 choix = self.view.afficher_menu_joueur()
             elif choix == "22":
                 listing = self.sort_players_by_names()
