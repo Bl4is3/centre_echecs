@@ -100,7 +100,7 @@ class View:
         place = input("Lieu du tournoi: ")
         date_beginning = input("Date du 1er jour: ")
         players = self.create_list_player_tournament()
-        timer = input("Choix du timer (bullet / blitz / coup rapide): ")
+        timer = input("Choix du timer (1:bullet / 2:blitz / 3:coup rapide): ")
         description = input("Description: ")
         details = [name, place, date_beginning, players, timer, description]
         return details
