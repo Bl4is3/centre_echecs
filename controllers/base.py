@@ -2,6 +2,8 @@
 
 from models.player import Player
 from models.tournament import Tournament
+from tinydb import TinyDB
+from pathlib import Path
 
 tournaments = []
 players = []
@@ -16,6 +18,8 @@ class Controller:
         self.view = view
         self.id_player = id_player
         self.id_tournament = id_tournament
+        # a corriger car doit reprendre le dernier id de la table
+        # si existante et non partir de 1 a chaque démarrage
 
     def create_player(self, detail):
         first_name = detail[0]
@@ -23,10 +27,40 @@ class Controller:
         sex = detail[2]
         date_birthday = detail[3]
         rank = detail[4]
-        player = Player(self.id_player, first_name, last_name, sex,
+        id_player = self.id_player
+        player = Player(id_player, first_name, last_name, sex,
                         date_birthday, rank)
         players.append(player)
+        serialized_player = {
+            'id': player.id,
+            'first_name': player.first_name,
+            'last_name': player.last_name,
+            'sex': player.sex,
+            'date_birthday': player.date_birthday,
+            'rank': player.rank
+        }
         self.id_player += 1
+
+    def init_db(self):
+        filename = r'db.json'
+        fileobj = Path(filename)
+        if fileobj.is_file():
+            return
+        else:
+            db = TinyDB('db.json')
+            players_table = db.table('players')
+            tournaments_table = db.table('tournaments')
+            players_table.truncate()
+            tournaments_table.truncate()
+        return db
+
+    def get_datas_from_db(self):
+        ...
+        # db = self.init_db()
+        # players_table = db.table('players')
+        # tournaments_table = db.table('tournaments')
+        # serialized_players = players_table.all()
+        # serialized_tournaments = tournaments_table.all()
 
     def start_tournament(self, detail):
         name = detail[0]
@@ -36,12 +70,12 @@ class Controller:
         timer = detail[4]
         description = detail[5]
         tournament = Tournament(self.id_tournament, name, place,
-                                date_beginning, players, timer, description, state)
+                                date_beginning, players, timer, description,
+                                finished=False)
         tournaments.append(tournament)
         self.id_tournament += 1
 
     def sort_players_by_names(self):
-        self.players = players
         names = []
         for play in players:
             names.append(play.first_name)
@@ -54,7 +88,6 @@ class Controller:
         return sorted_player_by_names
 
     def sort_players_by_rank(self):
-        self.players = players
         ranks = []
         for play in players:
             ranks.append(play.rank)
@@ -69,6 +102,8 @@ class Controller:
     def run(self):
         """Run the game."""
         running = True
+        db = self.init_db()
+        self.get_datas_from_db()
         choix = self.view.prompt_principal_menu()
         while running:
             if choix == "1":
