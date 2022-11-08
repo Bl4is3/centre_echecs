@@ -31,14 +31,6 @@ class Controller:
         player = Player(id_player, first_name, last_name, sex,
                         date_birthday, rank)
         players.append(player)
-        serialized_player = {
-            'id': player.id,
-            'first_name': player.first_name,
-            'last_name': player.last_name,
-            'sex': player.sex,
-            'date_birthday': player.date_birthday,
-            'rank': player.rank
-        }
         self.id_player += 1
 
     def serialized_player(self, detail):
@@ -54,7 +46,8 @@ class Controller:
         }
         return serialized_player
 
-    def unserialized_player(self, serialized_player):
+    @staticmethod
+    def unserialized_player(serialized_player):
         id_player = serialized_player['id']
         first_name = serialized_player['first_name']
         last_name = serialized_player['last_name']
@@ -70,7 +63,8 @@ class Controller:
             date_birthday,
             rank)
 
-    def init_db(self):
+    @staticmethod
+    def initialize_database():
         filename = r'db.json'
         fileobj = Path(filename)
         if fileobj.is_file():
@@ -81,7 +75,6 @@ class Controller:
             tournaments_table = db.table('tournaments')
             players_table.truncate()
             tournaments_table.truncate()
-        return db
 
     def get_datas_from_db(self):
         ...
@@ -91,23 +84,33 @@ class Controller:
         # serialized_players = players_table.all()
         # serialized_tournaments = tournaments_table.all()
 
-    def add_to_db(self):
-        ...
+    @staticmethod
+    def add_player_to_db(serialized_player):
+        db = TinyDB('db.json')
+        players_table = db.table('players')
+        players_table.insert(serialized_player)
 
     def start_tournament(self, detail):
         name = detail[0]
         place = detail[1]
         date_beginning = detail[2]
-        players = detail[3]
+        players_tournament = detail[3]
         timer = detail[4]
         description = detail[5]
-        tournament = Tournament(self.id_tournament, name, place,
-                                date_beginning, players, timer, description,
-                                finished=False)
+        tournament = Tournament(
+            self.id_tournament,
+            name,
+            place,
+            date_beginning,
+            players_tournament,
+            timer,
+            description,
+            finished=False)
         tournaments.append(tournament)
         self.id_tournament += 1
 
-    def sort_players_by_names(self):
+    @staticmethod
+    def sort_players_by_names():
         names = []
         for play in players:
             names.append(play.first_name)
@@ -119,7 +122,8 @@ class Controller:
                     sorted_player_by_names.append(player)
         return sorted_player_by_names
 
-    def sort_players_by_rank(self):
+    @staticmethod
+    def sort_players_by_rank():
         ranks = []
         for play in players:
             ranks.append(play.rank)
@@ -134,7 +138,7 @@ class Controller:
     def run(self):
         """Run the game."""
         running = True
-        db = self.init_db()
+        self.initialize_database()
         self.get_datas_from_db()
         choix = self.view.prompt_principal_menu()
         while running:
@@ -162,6 +166,7 @@ class Controller:
                 detail = self.view.add_player()
                 self.create_player(detail)
                 serialized_player = self.serialized_player(detail)
+                self.add_player_to_db(serialized_player)
                 choix = self.view.afficher_menu_joueur()
             elif choix == "22":
                 listing = self.sort_players_by_names()
