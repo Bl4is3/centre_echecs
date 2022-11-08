@@ -1,13 +1,14 @@
 class Tournament:
     def __init__(
         self,
+        id,
         name,
         place,
         dates,
         players,
         type_of_timer,
         description,
-        state,
+        finished=False,
         number_of_rounds=4,
     ):
         self.name = name
@@ -16,13 +17,13 @@ class Tournament:
         self.players = players
         self.type_of_timer = type_of_timer
         self.description = description
-        self.state = state
+        self.finished = finished
         self.number_of_rounds = number_of_rounds
 
     def __str__(self):
         """Used in print."""
         return (
-            f"Tournoi {self.name} du {self.dates[0]} ({self.state})"
+            f"{self.name} _ Tournoi {self.name} du {self.dates[0]} ({self.state})"
         )
 
     def __repr__(self):
