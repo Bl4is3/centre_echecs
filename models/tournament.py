@@ -1,7 +1,7 @@
 class Tournament:
     def __init__(
         self,
-        id,
+        id_tournament,
         name,
         place,
         dates,
@@ -11,6 +11,7 @@ class Tournament:
         finished=False,
         number_of_rounds=4,
     ):
+        self.id_tournament = id_tournament
         self.name = name
         self.place = place
         self.dates = dates
@@ -23,7 +24,7 @@ class Tournament:
     def __str__(self):
         """Used in print."""
         return (
-            f"{self.name} _ Tournoi {self.name} du {self.dates[0]} ({self.state})"
+            f"{self.id_tournament} _ Tournoi {self.name} du {self.dates[0]} ({self.state})"
         )
 
     def __repr__(self):
