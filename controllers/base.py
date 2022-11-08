@@ -2,7 +2,7 @@
 
 from models.player import Player
 from models.tournament import Tournament
-from tinydb import TinyDB
+from tinydb import TinyDB, Query
 from pathlib import Path
 
 tournaments = []
@@ -76,13 +76,19 @@ class Controller:
             players_table.truncate()
             tournaments_table.truncate()
 
-    def get_datas_from_db(self):
-        ...
-        # db = self.init_db()
-        # players_table = db.table('players')
-        # tournaments_table = db.table('tournaments')
-        # serialized_players = players_table.all()
-        # serialized_tournaments = tournaments_table.all()
+    @staticmethod
+    def get_players_from_db():
+        db = TinyDB('db.json')
+        players_table = db.table('players')
+        serialized_players = players_table.all()
+        return serialized_players
+
+    @staticmethod
+    def get_tournaments_from_db():
+        db = TinyDB('db.json')
+        tournaments_table = db.table('tournaments')
+        serialized_tournaments = tournaments_table.all()
+        return serialized_tournaments
 
     @staticmethod
     def add_player_to_db(serialized_player):
@@ -108,6 +114,23 @@ class Controller:
             finished=False)
         tournaments.append(tournament)
         self.id_tournament += 1
+
+    @staticmethod
+    def get_list_tournaments_not_finished():
+        db = TinyDB('db.json')
+        all_tournaments = db.table('tournaments')
+        list_tournaments = Query()
+        tournaments_in_progress = all_tournaments.search(
+            list_tournaments.finished == 'False')
+
+    @staticmethod
+    def get_last_id(element):
+        db = TinyDB('db.json')
+        name_table = str(element)
+        all_elements = db.table(name_table)
+        el = all_elements.all()[-1]
+        last_id = el.doc_id
+        return last_id
 
     @staticmethod
     def sort_players_by_names():
@@ -139,7 +162,8 @@ class Controller:
         """Run the game."""
         running = True
         self.initialize_database()
-        self.get_datas_from_db()
+        self.get_players_from_db()
+        self.get_tournaments_from_db()
         choix = self.view.prompt_principal_menu()
         while running:
             if choix == "1":
