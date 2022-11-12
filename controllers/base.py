@@ -30,8 +30,6 @@ class Controller:
     @staticmethod
     def serialized_player(player):
         """Serialize a player"""
-        # player = Player(self.id_player, detail[0], detail[1], detail[2],
-        #                 detail[3], detail[4])
         serialized_player = {
             'id': player.id,
             'first_name': player.first_name,
@@ -60,37 +58,45 @@ class Controller:
             date_birthday,
             rank)
 
-    def serialized_tournament(self, tournament):
+    @staticmethod
+    def serialized_tournament(tournament):
         """Serialize a tournament"""
         serialized_tournament = {
             'id': tournament.id,
-            'first_name': tournament.first_name,
-            'last_name': tournament.last_name,
-            'sex': tournament.sex,
-            'date_birthday': tournament.date_birthday,
-            'rank': tournament.rank
+            'name': tournament.name,
+            'place': tournament.place,
+            'date_beginning': tournament.date_beginning,
+            'players_tournament': tournament.players,
+            'timer': tournament.timer,
+            'description': tournament.description,
+            'finished': tournament.finished,
+            'number_of_rounds': tournament.number_of_rounds
         }
         return serialized_tournament
 
-    def unserialized_tournament(self, serialized_tournament):
+    @staticmethod
+    def unserialized_tournament(serialized_tournament):
         """Unserialize a tournament"""
-        id_tournament = serialized_tournament['id']
+        id = serialized_tournament['id']
         name = serialized_tournament['name']
         place = serialized_tournament['place']
         date_beginning = serialized_tournament['date_beginning']
-        players_tournament = serialized_tournament['players_tournament']
+        players = serialized_tournament['players_tournament']
         timer = serialized_tournament['timer']
         description = serialized_tournament['description']
         finished = serialized_tournament['finished']
+        number_of_rounds = serialized_tournament['number_of_rounds']
+
         return Tournament(
-            id_tournament,
+            id,
             name,
             place,
             date_beginning,
-            players_tournament,
+            players,
             timer,
             description,
-            finished)
+            finished,
+            number_of_rounds)
 
     @staticmethod
     def initialize_database():
@@ -122,7 +128,6 @@ class Controller:
         return serialized_tournaments
 
     def add_player_to_db(self, serialized_player):
-
         db = TinyDB('db.json')
         players_table = db.table('players')
         players_table.insert(serialized_player)
@@ -132,13 +137,14 @@ class Controller:
         tournaments_table = db.table('tournaments')
         tournaments_table.insert(serialized_tournament)
 
-    def start_tournament(self, detail):
+    def create_tournament(self, detail):
         name = detail[0]
         place = detail[1]
         date_beginning = detail[2]
         players_tournament = detail[3]
         timer = detail[4]
         description = detail[5]
+        number_of_rounds = detail[6]
         id_tournament = self.get_last_id('tournaments') + 1
         tournament = Tournament(
             id_tournament,
@@ -148,27 +154,34 @@ class Controller:
             players_tournament,
             timer,
             description,
-            finished=False)
+            number_of_rounds
+            )
         serialized_tournament = self.serialized_tournament(tournament)
         self.add_tournament_to_db(serialized_tournament)
 
-
-    @staticmethod
-    def get_list_tournaments_not_finished():
+    def get_list_tournaments_not_finished(self):
         """ Get tournaments in progress"""
         db = TinyDB('db.json')
         all_tournaments = db.table('tournaments')
         list_tournaments = Query()
         tournaments_in_progress = all_tournaments.search(
             list_tournaments.finished == 'False')
-        return tournaments_in_progress
+        tournaments = []
+        for tournament in tournaments_in_progress:
+            unserialized_tournament = self.unserialized_tournament(tournament)
+            tournaments.append(unserialized_tournament)
+        return tournaments
 
     def get_last_id(self, element):
         db = TinyDB('db.json')
         name_table = str(element)
         elements = db.table(name_table)
-        el = elements.all()[-1]
-        last_id = el.doc_id
+        if elements:
+            el = elements.all()[-1]
+            last_id = el.doc_id
+        else:
+            last_id = 0
+
         return last_id
 
     def get_number_of_players(self):
@@ -222,12 +235,20 @@ class Controller:
                           "inscrits pour débuter un tournoi")
                     choix = self.view.afficher_menu_joueur()
                 else:
-                    choix = self.view.create_tournament()
+                    elements_tournament = self.view.create_tournament()
+                    self.create_tournament(elements_tournament)
+                    choix = self.view.afficher_menu_tournoi()
             elif choix == "12":
                 choix = self.view.resume_tournament()
             elif choix == "13":
-                listing = self.view.show_listing_all_tournaments()
-                choix = self.view.affichage_liste_joueurs_classement(listing)
+                tournois = self.get_tournaments_from_db()
+                tournaments = []
+                for tournoi in tournois:
+                    unserialized_tournament = self.unserialized_tournament(tournoi)
+                    tournaments.append(unserialized_tournament)
+
+                self.view.show_listing_all_tournaments(tournaments)
+                choix = self.view.afficher_menu_tournoi()
             elif choix == "16":
                 choix = self.view.prompt_principal_menu()
             elif choix == "15":
@@ -237,8 +258,6 @@ class Controller:
             elif choix == "21":
                 elements_player = self.view.add_player()
                 self.create_player(elements_player)
-                # serialized_player = self.serialized_player(detail)
-                # self.add_player_to_db(serialized_player)
                 choix = self.view.afficher_menu_joueur()
             elif choix == "22":
                 players = self.get_players_from_db()

@@ -102,7 +102,9 @@ class View:
         players = self.create_list_player_tournament()
         timer = input("Choix du timer (1:bullet / 2:blitz / 3:coup rapide): ")
         description = input("Description: ")
-        details = [name, place, date_beginning, players, timer, description]
+        number_of_rounds = input("Nb de tours ( 4 par défault )")
+        details = [name, place, date_beginning, players, timer, description,
+                   number_of_rounds]
         return details
 
     def show_listing_all_tournaments(self, tournaments):
