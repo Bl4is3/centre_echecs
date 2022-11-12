@@ -16,8 +16,8 @@ class View:
         date_birthday = input("Date de naissance: ")
         rank = input("Classement: ")
 
-        details = [first_name, last_name, sex, date_birthday, rank]
-        return details
+        elements_player = [first_name, last_name, sex, date_birthday, rank]
+        return elements_player
 
     def afficher_menu_joueur(self):
         print(
