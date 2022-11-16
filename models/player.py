@@ -17,3 +17,20 @@ class Player:
     def __repr__(self):
         """Used in print."""
         return str(self)
+    
+    
+
+    def serialized_player(self, player):
+        """Serialize a player"""
+        serialized_player = {
+            'id': player.id,
+            'first_name': player.first_name,
+            'last_name': player.last_name,
+            'sex': player.sex,
+            'date_birthday': player.date_birthday,
+            'rank': player.rank
+        }
+        return serialized_player
+
+    
+   
