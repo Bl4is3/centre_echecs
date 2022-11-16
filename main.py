@@ -6,7 +6,7 @@ from controllers.base import Controller
 def main():
     view = View()
     # debut.prompt_principal_menu()
-    controller = Controller(view)
+    controller = Controller()
     controller.run()
 
 
