@@ -6,7 +6,7 @@ class View:
 
     def add_player(self):
         print(
-            "-------------------------------\n"
+            "\n-------------------------------\n"
             "Ajouter un joueur:\n"
             "-------------------------------\n"
         )
@@ -21,10 +21,10 @@ class View:
 
     def afficher_menu_joueur(self):
         print(
-            "-------------------------------\n"
+            "\n-------------------------------\n"
             "Menu Joueur:\n"
             "-------------------------------\n"
-            "21 - Ajouter un joueur \n"
+            "\n21 - Ajouter un joueur \n"
             "22 - Afficher la liste des joueurs par alphabétique\n"
             "23 - Afficher la liste des joueurs par classement\n"
             "24 - Revenir au menu principal\n"
@@ -35,12 +35,12 @@ class View:
 
     def prompt_principal_menu(self):
         print(
-            "-------------------------------\n"
+            "\n-------------------------------\n"
             "BIENVENUE AU CENTRE D'ECHECS:\n"
             "-------------------------------\n"
             "Menu Principal:\n"
             "-------------------------------\n"
-            "1 - Menu Tournoi \n"
+            "\n1 - Menu Tournoi \n"
             "2 - Menu Joueur\n"
             "3 - Sauvegarder et quitter\n"
         )
@@ -49,11 +49,11 @@ class View:
 
     def afficher_menu_tournoi(self):
         print(
-            "-------------------------------\n"
+            "\n-------------------------------\n"
             "Menu Tournoi:\n"
             "-------------------------------\n"
-            "11 - Créer un tournoi \n"
-            "12 - Reprendre un tournoi en cours\n"
+            "\n11 - Créer un tournoi \n"
+            "12 - Lancer / Reprendre un tournoi \n"
             "13 - Afficher la liste de tous les tournois \n"
             "14 - Afficher la liste de tous les tours d'un tournoi\n"
             "15 - Afficher la liste de tous les matchs d'un tournoi\n"
@@ -66,23 +66,27 @@ class View:
 
     def affichage_liste_joueurs_alphabetique(self, players):
         self.players = players
+        print('\n')
+        print('Voici la liste des joueurs par ordre alphabétique : \n')
         for player in players:
             print(player)
 
     def affichage_liste_joueurs_classement(self, players):
         self.players = players
+        
+        print('\nVoici la liste des joueurs par classemnt croissant : \n')
         for player in players:
             print(player)
 
     def create_list_player_tournament(self):
-        player_1 = input("Id du joueur 1: ")
-        player_2 = input("Id du joueur 2: ")
-        player_3 = input("Id du joueur 3: ")
-        player_4 = input("Id du joueur 4: ")
-        player_5 = input("Id du joueur 5: ")
-        player_6 = input("Id du joueur 6: ")
-        player_7 = input("Id du joueur 7: ")
-        player_8 = input("Id du joueur 8: ")
+        player_1 = int(input("Id du joueur 1: "))
+        player_2 = int(input("Id du joueur 2: "))
+        player_3 = int(input("Id du joueur 3: "))
+        player_4 = int(input("Id du joueur 4: "))
+        player_5 = int(input("Id du joueur 5: "))
+        player_6 = int(input("Id du joueur 6: "))
+        player_7 = int(input("Id du joueur 7: "))
+        player_8 = int(input("Id du joueur 8: "))
         players = [
             player_1, player_2, player_3, player_4,
             player_5, player_6, player_7, player_8
@@ -92,7 +96,7 @@ class View:
 
     def create_tournament(self):
         print(
-            "-------------------------------\n"
+            "\n-------------------------------\n"
             "Créer un tournoi:\n"
             "-------------------------------\n"
         )
@@ -102,22 +106,35 @@ class View:
         players = self.create_list_player_tournament()
         timer = input("Choix du timer (1:bullet / 2:blitz / 3:coup rapide): ")
         description = input("Description: ")
-        number_of_rounds = input("Nb de tours ( 4 par défault )")
+        number_of_rounds = int(input("Nb de tours ( 4 par défault )"))
         details = [name, place, date_beginning, players, timer, description,
                    number_of_rounds]
         return details
+    
+    def select_tournament(self):
+        id_tournament = int(input("\nEntrez un numéro du tournoi: "))
+        return id_tournament
 
     def show_listing_all_tournaments(self, tournaments):
         self.tournaments = tournaments
+        
+        print('\nVoici la liste des tournois : \n')
         for tournament in tournaments:
             print(tournament)
+        
 
     def show_listing_all_rounds_of_a_tournament(self, tournament):
         self.tournament = tournament
+        
+        print('\nVoici la liste des rounds du tournoi {tournament.id} : \n')
         for round in tournament.rounds:
             print(round)
+        
 
     def show_listing_all_matchs_of_a_tournament(self, tournament):
         self.tournament = tournament
+        
+        print('\nVoici la liste de tous les matchs du tournoi {tournament.id} : \n')
         for match in tournament.matchs:
             print(match)
+        
