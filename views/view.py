@@ -55,10 +55,11 @@ class View:
             "\n11 - Créer un tournoi \n"
             "12 - Lancer / Reprendre un tournoi \n"
             "13 - Afficher la liste de tous les tournois \n"
-            "14 - Afficher la liste de tous les tours d'un tournoi\n"
-            "15 - Afficher la liste de tous les matchs d'un tournoi\n"
-            "16 - Revenir au menu principal\n"
-            "17 - Sauvegarder et quitter\n"
+            "14 - Afficher la liste de tous les tournois en cours \n"
+            "15 - Afficher la liste de tous les tours d'un tournoi\n"
+            "16 - Afficher la liste de tous les matchs d'un tournoi\n"
+            "17 - Revenir au menu principal\n"
+            "18 - Sauvegarder et quitter\n"
         )
 
         choix = input("Entrez votre choix :")
@@ -66,15 +67,15 @@ class View:
 
     def affichage_liste_joueurs_alphabetique(self, players):
         self.players = players
-        print('\n')
-        print('Voici la liste des joueurs par ordre alphabétique : \n')
+        print("\n")
+        print("Voici la liste des joueurs par ordre alphabétique : \n")
         for player in players:
             print(player)
 
     def affichage_liste_joueurs_classement(self, players):
         self.players = players
-        
-        print('\nVoici la liste des joueurs par classemnt croissant : \n')
+
+        print("\nVoici la liste des joueurs par classemnt croissant : \n")
         for player in players:
             print(player)
 
@@ -88,8 +89,14 @@ class View:
         player_7 = int(input("Id du joueur 7: "))
         player_8 = int(input("Id du joueur 8: "))
         players = [
-            player_1, player_2, player_3, player_4,
-            player_5, player_6, player_7, player_8
+            player_1,
+            player_2,
+            player_3,
+            player_4,
+            player_5,
+            player_6,
+            player_7,
+            player_8,
         ]
 
         return players
@@ -107,34 +114,52 @@ class View:
         timer = input("Choix du timer (1:bullet / 2:blitz / 3:coup rapide): ")
         description = input("Description: ")
         number_of_rounds = int(input("Nb de tours ( 4 par défault )"))
-        details = [name, place, date_beginning, players, timer, description,
-                   number_of_rounds]
+        details = [
+            name,
+            place,
+            date_beginning,
+            players,
+            timer,
+            description,
+            number_of_rounds,
+        ]
         return details
-    
+
     def select_tournament(self):
         id_tournament = int(input("\nEntrez un numéro du tournoi: "))
         return id_tournament
 
     def show_listing_all_tournaments(self, tournaments):
         self.tournaments = tournaments
-        
-        print('\nVoici la liste des tournois : \n')
+
+        print("\nVoici la liste des tournois : \n")
         for tournament in tournaments:
             print(tournament)
-        
 
-    def show_listing_all_rounds_of_a_tournament(self, tournament):
-        self.tournament = tournament
-        
-        print('\nVoici la liste des rounds du tournoi {tournament.id} : \n')
-        for round in tournament.rounds:
+    def show_listing_all_rounds_of_a_tournament(self, rounds, id_tournament):
+        self.rounds = rounds
+
+        print(
+            "\nVoici la liste des rounds du tournoi n:°{self.id_tournament}}:\n"
+        )
+        for rounds in rounds:
             print(round)
-        
 
-    def show_listing_all_matchs_of_a_tournament(self, tournament):
-        self.tournament = tournament
-        
-        print('\nVoici la liste de tous les matchs du tournoi {tournament.id} : \n')
-        for match in tournament.matchs:
+    def show_listing_all_matchs_of_a_tournament(self, matchs, id_tournament):
+        self.matchs = matchs
+        self.id_tournament = id_tournament
+
+        print(
+            "\nVoici la liste des matchs du tournoi n:°{self.id_tournament}:\n"
+        )
+        for match in matchs:
             print(match)
-        
+
+    def get_match_winner(self, match):
+        print(
+            "Veuillez entrer le vainqueur du match{match.number}:\n"
+        )
+        choix = input(
+            "(1: Joueur 1, 2: Joueur 2, E: égalité, Q: quitter et sauvagerder ):"
+        )
+        return choix
