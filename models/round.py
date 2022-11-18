@@ -17,14 +17,14 @@ class Round:
         """Used in print."""
         return str(self)
 
-    def serialized_round(self, round):
+    def serialize(self):
         """Serialize a round"""
         serialized_round = {
-            'id': round.id,
-            'number': round.number,
-            'id_tournament': round.id_tournament,
-            'datetime_beginning': round.datetime_beginning,
-            'datetime_end': round.datetime_end
+            'id': self.id,
+            'number': self.number,
+            'id_tournament': self.id_tournament,
+            'datetime_beginning': self.datetime_beginning,
+            'datetime_end': self.datetime_end
         }
         return serialized_round
 

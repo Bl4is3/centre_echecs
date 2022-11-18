@@ -37,19 +37,19 @@ class Tournament:
         """Used in print."""
         return str(self)
 
-    def serialized_tournament(self, tournament):
+    def serialize(self):
         """Serialize a tournament"""
         serialized_tournament = {
-            "id": tournament.id,
-            "name": tournament.name,
-            "place": tournament.place,
-            "dates": tournament.dates,
-            "players": tournament.players,
-            "scores": tournament.scores,
-            "timer": tournament.timer,
-            "description": tournament.description,
-            "number_of_rounds": tournament.number_of_rounds,
-            "rounds_ok": tournament.rounds_ok,
-            "finished": tournament.finished
+            "id": self.id,
+            "name": self.name,
+            "place": self.place,
+            "dates": self.dates,
+            "players": self.players,
+            "scores": self.scores,
+            "timer": self.timer,
+            "description": self.description,
+            "number_of_rounds": self.number_of_rounds,
+            "rounds_ok": self.rounds_ok,
+            "finished": self.finished
         }
         return serialized_tournament

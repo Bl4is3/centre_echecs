@@ -1,4 +1,4 @@
-from tinydb import TinyDB
+from tinydb import TinyDB, Query, where
 from pathlib import Path
 
 class Database:
@@ -18,14 +18,15 @@ class Database:
             players_table = self.db.table('players')
             tournaments_table = self.db.table('tournaments')
             rounds_table = self.db.table('rounds')
-            matches_table = self.db.table('matches')
+            matchs_table = self.db.table('matchs')
             players_table.truncate()
             tournaments_table.truncate()
             rounds_table.truncate()
-            matches_table.truncate()
+            matchs_table.truncate()
     
-    def get_number_of_players(self):
-        elements = self.db.table('players')
+    def get_number_of_elements(self, table):
+        """ Get numbers of element in a table"""
+        elements = self.db.table(table)
         number = len(elements)
         return number
     
@@ -44,19 +45,10 @@ class Database:
 
         return last_id
     
-    # def add_element_to_db(self, element):
-    #     element_table = [name for name in locals() if locals()[name] is element]
-    #     element_table = element_table[11:]
-    #     self.db.table(str(element_table) + 's').insert(element)
-
-    def add_tournament_to_db(self, serialized_tournament):
-        tournaments_table = self.db.table('tournaments')
-        tournaments_table.insert(serialized_tournament)
+    def add_element_to_db(self, element, table):
+        self.db.table(table).insert(element)
     
-    def add_player_to_db(self, serialized_player):
-        players_table = self.db.table('players')
-        players_table.insert(serialized_player)
-
-    def add_round_to_db(self, serialized_round):
-        rounds_table = self.db.table('rounds')
-        rounds_table.insert(serialized_round)
+    def update_element(self, element, table, field, value, reference):
+        """ Update an element with value in a table where field is reference"""
+        elements = self.get_table_from_db(table)
+        elements.update({str(element): value}, where(field) == reference)
