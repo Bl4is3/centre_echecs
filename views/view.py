@@ -138,28 +138,25 @@ class View:
 
     def show_listing_all_rounds_of_a_tournament(self, rounds, id_tournament):
         self.rounds = rounds
-
-        print(
-            "\nVoici la liste des rounds du tournoi n:°{self.id_tournament}}:\n"
-        )
-        for rounds in rounds:
-            print(round)
-
-    def show_listing_all_matchs_of_a_tournament(self, matchs, id_tournament):
-        self.matchs = matchs
         self.id_tournament = id_tournament
 
         print(
-            "\nVoici la liste des matchs du tournoi n:°{self.id_tournament}:\n"
+            "\nVoici la liste des rounds du tournoi n:°",self.id_tournament,":\n"
         )
+        for round in rounds:
+            print(round)
+
+    def show_listing_all_matchs_of_a_round(self, matchs):
+        self.matchs = matchs
         for match in matchs:
             print(match)
 
     def get_match_winner(self, match):
+        self.match = match
         print(
-            "Veuillez entrer le vainqueur du match{match.number}:\n"
+            "\nVeuillez entrer le vainqueur du match joueur n°", match.id_player_1," contre joueur n°",match.id_player_2, ":" 
         )
         choix = input(
-            "(1: Joueur 1, 2: Joueur 2, E: égalité, Q: quitter et sauvagerder ):"
+            "(1: Joueur 1, 2: Joueur 2, E: égalité, Q: quitter):"
         )
         return choix
