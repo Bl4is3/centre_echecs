@@ -10,7 +10,7 @@ class Round:
         """Used in print."""
         return (
             f"Round_{self.number} _ du tournoi n°: {self.id_tournament} qui a débuté le "
-            f"{self.datetime_beginning} et a terminé le {self.datetime_end}"
+            f"{self.datetime_beginning}"
         )
 
     def __repr__(self):
