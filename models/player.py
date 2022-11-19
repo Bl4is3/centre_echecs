@@ -20,15 +20,15 @@ class Player:
     
     
 
-    def serialized_player(self, player):
+    def serialize(self):
         """Serialize a player"""
         serialized_player = {
-            'id': player.id,
-            'first_name': player.first_name,
-            'last_name': player.last_name,
-            'sex': player.sex,
-            'date_birthday': player.date_birthday,
-            'rank': player.rank
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'sex': self.sex,
+            'date_birthday': self.date_birthday,
+            'rank': self.rank
         }
         return serialized_player
 
