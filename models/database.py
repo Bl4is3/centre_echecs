@@ -46,7 +46,7 @@ class Database:
         return last_id
     
     def add_element_to_db(self, element, table):
-        self.db.table(table).insert(element)
+        self.db.table(table).insert(element.serialize())
     
     def update_element(self, element, table, field, value, reference):
         """ Update an element with value in a table where field is reference"""
