@@ -9,7 +9,7 @@ class Database:
         return self.db.table(name_table)
     
     def initialize_database(self):
-        """Create database  and tables (if not exist)"""
+        """ Create database  and tables (if not exist)"""
         filename = r'db.json'
         fileobj = Path(filename)
         if fileobj.is_file():
@@ -35,6 +35,7 @@ class Database:
         return  self.db.table(elements).all()
        
     def get_last_id(self, element):
+        """ Get last id in a table"""
         name_table = str(element)
         elements = self.db.table(name_table)
         if elements:
@@ -44,8 +45,17 @@ class Database:
             last_id = 0
 
         return last_id
+
+    def get_element_in_table(self, id, table):
+        """ Get an element from a table with id """
+        all_elements = self.db.get_table_from_db(table)
+        for element in all_elements:
+            if element.doc_id == id:
+                result = element
+        return result
     
     def add_element_to_db(self, element, table):
+        """ Add an element in a table"""
         self.db.table(table).insert(element.serialize())
     
     def update_element(self, element, table, field, value, reference):

@@ -52,7 +52,7 @@ class View:
             "\n-------------------------------\n"
             "Menu Tournoi:\n"
             "-------------------------------\n"
-            "\n11 - Créer un tournoi \n"
+            "11 - Créer un tournoi \n"
             "12 - Lancer / Reprendre un tournoi \n"
             "13 - Afficher la liste de tous les tournois \n"
             "14 - Afficher la liste de tous les tournois en cours \n"
@@ -129,12 +129,9 @@ class View:
         id_tournament = int(input("\nEntrez un numéro du tournoi: "))
         return id_tournament
 
-    def show_listing_all_tournaments(self, tournaments):
-        self.tournaments = tournaments
-
-        print("\nVoici la liste des tournois : \n")
-        for tournament in tournaments:
-            print(tournament)
+    def show_listing_all_tournaments(self, tournament):
+        self.tournament = tournament
+        print(tournament)
 
     def show_listing_all_rounds_of_a_tournament(self, rounds, id_tournament):
         self.rounds = rounds
@@ -150,13 +147,21 @@ class View:
         self.matchs = matchs
         for match in matchs:
             print(match)
+        
+    def show_tournament_result(self, tournament_result):
+        self.tournament_result = tournament_result
+        print("Résultat:")
+        print("Vainqueur: Joueur", tournament_result[0][0], " avec ", tournament_result[0][1], "points")
+        print("Second: Joueur", tournament_result[1][0], " avec ", tournament_result[1][1], "points")
+        for i in range (2,8):
+            print("", i+1, "ème: Joueur",tournament_result[i][0], " avec ", tournament_result[i][1], "points")
 
     def get_match_winner(self, match):
         self.match = match
         print(
-            "\nVeuillez entrer le vainqueur du match joueur n°", match.id_player_1," contre joueur n°",match.id_player_2, ":" 
+            "\nVeuillez entrer le vainqueur du ", match,": "
         )
         choix = input(
-            "(1: Joueur 1, 2: Joueur 2, E: égalité, Q: quitter):"
+            "Joueur (1), Joueur (2), (E)galité, (Q)uitter:"
         )
         return choix

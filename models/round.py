@@ -9,7 +9,7 @@ class Round:
     def __str__(self):
         """Used in print."""
         return (
-            f"Round_{self.number} _ du tournoi n°: {self.id_tournament} qui a débuté le "
+            f"Round_{self.number} du tournoi n°:{self.id_tournament} qui a débuté le "
             f"{self.datetime_beginning}"
         )
 
@@ -27,5 +27,7 @@ class Round:
             'datetime_end': self.datetime_end
         }
         return serialized_round
+    
+    
 
     
