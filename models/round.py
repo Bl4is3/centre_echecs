@@ -1,11 +1,11 @@
 class Round:
-    def __init__(self, id, number, id_tournament, datetime_beginning, datetime_end= None):
+    def __init__(self, id, name, id_tournament, datetime_beginning, datetime_end=None):
         self.id = id
-        self.number = number
+        self.name = name
         self.id_tournament = id_tournament
         self.datetime_beginning = datetime_beginning
         self.datetime_end = datetime_end
-    
+
     def __str__(self):
         """Used in print."""
         return (
@@ -21,13 +21,9 @@ class Round:
         """Serialize a round"""
         serialized_round = {
             'id': self.id,
-            'number': self.number,
+            'name': self.name,
             'id_tournament': self.id_tournament,
             'datetime_beginning': self.datetime_beginning,
             'datetime_end': self.datetime_end
         }
         return serialized_round
-    
-    
-
-    

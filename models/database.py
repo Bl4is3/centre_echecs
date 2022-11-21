@@ -1,5 +1,6 @@
-from tinydb import TinyDB, Query, where
+from tinydb import TinyDB, where
 from pathlib import Path
+
 
 class Database:
     def __init__(self, name):
@@ -7,7 +8,7 @@ class Database:
 
     def get_table_from_db(self, name_table):
         return self.db.table(name_table)
-    
+
     def initialize_database(self):
         """ Create database  and tables (if not exist)"""
         filename = r'db.json'
@@ -23,17 +24,17 @@ class Database:
             tournaments_table.truncate()
             rounds_table.truncate()
             matchs_table.truncate()
-    
+
     def get_number_of_elements(self, table):
         """ Get numbers of element in a table"""
         elements = self.db.table(table)
         number = len(elements)
         return number
-    
+
     def get_elements_from_db(self, elements):
         """ Get elements from db"""
-        return  self.db.table(elements).all()
-       
+        return self.db.table(elements).all()
+
     def get_last_id(self, element):
         """ Get last id in a table"""
         name_table = str(element)
@@ -53,11 +54,11 @@ class Database:
             if element.doc_id == id:
                 result = element
         return result
-    
+
     def add_element_to_db(self, element, table):
         """ Add an element in a table"""
         self.db.table(table).insert(element.serialize())
-    
+
     def update_element(self, element, table, field, value, reference):
         """ Update an element with value in a table where field is reference"""
         elements = self.get_table_from_db(table)

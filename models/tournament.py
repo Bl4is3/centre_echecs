@@ -10,7 +10,7 @@ class Tournament:
         timer,
         description,
         number_of_rounds=4,
-        rounds_ok = 0,
+        rounds_ok=0,
         finished=False,
     ):
         self.id = id
@@ -27,7 +27,7 @@ class Tournament:
 
     def __str__(self):
         """Used in print."""
-        if self.finished == True:
+        if self.finished is True:
             statut = "fini"
         else:
             statut = "en cours"

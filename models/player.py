@@ -1,6 +1,5 @@
 class Player:
-    def __init__(self, id, first_name, last_name, date_birthday, sex,
-                                 rank):
+    def __init__(self, id, first_name, last_name, date_birthday, sex, rank):
         self.id = id
         self.first_name = first_name
         self.last_name = last_name
@@ -17,8 +16,6 @@ class Player:
     def __repr__(self):
         """Used in print."""
         return str(self)
-    
-    
 
     def serialize(self):
         """Serialize a player"""
@@ -31,6 +28,3 @@ class Player:
             'rank': self.rank
         }
         return serialized_player
-
-    
-   
