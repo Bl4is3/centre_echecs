@@ -6,6 +6,7 @@ from models.match import Match
 from models.database import Database
 from views.view import View
 from tinydb import TinyDB, Query, where
+from operator import itemgetter
 
 from datetime import datetime
 
@@ -166,31 +167,35 @@ class Controller:
         round_matchs = matchs.search(where('id_round') == id_round)
         return round_matchs    
 
-    def get_final_score(self, id_tournament):
+    def sorted_by_score_rank(self, id_tournament):
         tournaments = self.db.get_table_from_db("tournaments")
         tournament = tournaments.search(where("id") == id_tournament)
         unserialized_tournament = self.unserialize_tournament(tournament[0])
-        players_scores = []
-        for i in range(0,8):
-            players_scores.append((unserialized_tournament.players[i], unserialized_tournament.scores[i])) 
-        sorted_scores = sorted(players_scores, key=lambda score: score[1], reverse=True)    
-        return sorted_scores
+        players = self.db.get_table_from_db('players') 
+        players_score_rank = []
+        for i in range (0,8):
+            player = players.search(where("id") == unserialized_tournament.players[i])
+            unserialize_player= self.unserialize_player(player[0])
+            players_score_rank.append(( 
+                unserialized_tournament.players[i],
+                unserialized_tournament.scores[i],
+                unserialize_player.rank))
+        sorted_players = sorted(players_score_rank, key=itemgetter(1,2), reverse=True)   
+        return sorted_players
 
     def load_tournament(self, id_tournament):
         tournaments = self.db.get_table_from_db("tournaments")
         tournament = tournaments.search(where("id") == id_tournament)
         unserialized_tournament = self.unserialize_tournament(tournament[0])
         players = self.db.get_table_from_db('players') 
+        rounds = self.db.get_table_from_db('rounds')
+        matchs = self.db.get_table_from_db('matchs')
         list_players = []
         for player in players:
             if player['id'] in unserialized_tournament.players:
                 list_players.append(player)
         
         if unserialized_tournament.rounds_ok == 0:
-            # rounds = self.db.get_elements_from_db("rounds")
-            # for round in rounds:
-            #     if round['id_tournament'] == unserialized_tournament.id:
-            #         round_in_progress = self.unserialized_round(round)
             round_number = 1
             round_id = self.create_round(round_number, unserialized_tournament.id)
             sorted_players = self.sort_players_rank_name(list_players)                                    
@@ -200,74 +205,80 @@ class Controller:
                 id_joueur_2 = sorted_players[i+3].id
                 match = Match(id,round_id, id_joueur_1, id_joueur_2)
                 self.db.add_element_to_db(match, 'matchs')
-            
-            
-            
-    
-        elif unserialized_tournament.rounds_ok >= (unserialized_tournament.number_of_rounds):
-            unserialized_tournament.finished = True
-            print("\nCe tournoi est terminé.")
-            round_number = False
                
-        else:
-            round_number = unserialized_tournament.rounds_ok + 1
-            round_id = self.create_round(
-                round_number, 
-                unserialized_tournament.id
-            )
-            players_scores_rank= []
-            for i in range (0,8):
-                player = players.search(where("id") == unserialized_tournament.players[i])
-                unserialize_player= self.unserialize_player(player)
-                players_scores_rank.append(( 
-                    unserialized_tournament.players[i],
-                    unserialized_tournament.scores[i],
-                    unserialize_player.rank))
-            sorted_players = sorted(players_scores_rank, key=lambda player: (player[1], player[2]))
-            rounds = self.get_tournament_rounds( id_tournament)
-            all_matchs = []
-            for round in rounds:   
-                matchs = self.get_round_matchs(round['id'])
-                for match in matchs:
-                    all_matchs.append(match)
-            already_play = []
-            for match in all_matchs:
-                already_play.append((match['id_player_1'], match['id_player_2']))
-            a = 0
-            b = 1
-            while len(sorted_players) >= 2:
-                paire = (sorted_players[a][0], sorted_players[b][0])
-                if paire not in already_play:
-                    id = self.db.get_last_id("matchs") + 1
-                    match = Match(id, round_id, sorted_players[0][0], sorted_players[a][0])
-                    self.db.add_element_to_db(match, 'matchs')
-                    sorted_players.remove(sorted_players[0])
-                    sorted_players.remove(sorted_players[0])
-                    b = 1
+        elif unserialized_tournament.rounds_ok <= unserialized_tournament.number_of_rounds:
+            previous_round = rounds.search((where('number') == unserialized_tournament.rounds_ok ) & (where('id_tournament') == id_tournament))
+            unserialize_previous_round = self.unserialize_round(previous_round[0])
+            previous_round_matchs = matchs.search(where('id_round') == unserialize_previous_round.id)
+            unserialized_previous_round_matchs = self.unserialize_matchs(previous_round_matchs)
+            matchs_in_progress = []
+            for match in unserialized_previous_round_matchs:
+                if match.result_player_1 == "":
+                    matchs_in_progress.append(match)
+            if matchs_in_progress:
+                round_number = unserialized_tournament.rounds_ok
+                result = self.load_round_tournament(id_tournament, round_number)
+
+            else:
+                if unserialized_tournament.rounds_ok == unserialized_tournament.number_of_rounds:
+                    result = False
+                    print("\nLe tournoi est terminé")
                 else:
-                    if b < len(players)-1:
-                        b += 1
-                    else:
-                        a += 1
-                        b = a + 1
+                    round_number = unserialized_tournament.rounds_ok + 1
+                    round_id = self.create_round(
+                        round_number, 
+                        unserialized_tournament.id
+                    )
+                    sorted_players = self.sorted_by_score_rank(unserialized_tournament.id)
+                    rounds = self.get_tournament_rounds( id_tournament)
+                    all_matchs = []
+                    for round in rounds:   
+                        matchs = self.get_round_matchs(round['id'])
+                        for match in matchs:
+                            all_matchs.append(match)
+                    already_play = []
+                    for match in all_matchs:
+                        already_play.append((match['id_player_1'], match['id_player_2']))
+                    a = 0
+                    b = 1
+                    while len(sorted_players) >= 2:
+                        paire = (sorted_players[a][0], sorted_players[b][0])
+                        if paire not in already_play:
+                            id = self.db.get_last_id("matchs") + 1
+                            match = Match(id, round_id, sorted_players[a][0], sorted_players[b][0])
+                            self.db.add_element_to_db(match, 'matchs')
+                            sorted_players.remove(sorted_players[a])
+                            sorted_players.remove(sorted_players[b-1])
+                            b = 1
+                        else:
+                            if b < len(players)-1:
+                                b += 1
+                            else:
+                                a += 1
+                                b = a + 1
+                    result = self.load_round_tournament(id_tournament, round_number)
             
+        else:
             
-           
-        tournaments.update({'rounds_ok': round_number}, where('id') == id_tournament)
+            return 
+
+        if result:
+            tournaments.update({'rounds_ok': round_number}, where('id') == id_tournament)
         
-            
-        return round_number
+        return result
+       
             
     def load_round_tournament(self,id_tournament, round_number):
 
         tournaments = self.db.get_table_from_db("tournaments")
         tournament = tournaments.search(where("id") == id_tournament)
-        unserialized_tournament = self.unserialized_tournament(tournament[0])
+        unserialized_tournament = self.unserialize_tournament(tournament[0])
         rounds = self.db.get_table_from_db('rounds')
         round = rounds.search((where('number') == round_number ) & (where('id_tournament') == id_tournament))
+        result = True
         if round:
             unserialized_round = self.unserialize_round(round[0])
-            print(unserialized_round)
+            print("\n",unserialized_round)
             print("\nVoici la liste des prochains matchs:")
             matchs = self.db.get_table_from_db('matchs')
             unserialized_matchs_round =[]
@@ -277,7 +288,7 @@ class Controller:
                     print(unserialized_match)
                     unserialized_matchs_round.append(unserialized_match)
             for match_round in unserialized_matchs_round:
-                if not match_round.result_player_1:
+                if  match_round.result_player_1 == "":
                     result = self.view.get_match_winner(match_round)
                     if result == '1':
                         score_indice = unserialized_tournament.players.index(
@@ -298,17 +309,19 @@ class Controller:
                         unserialized_tournament.scores[score_indice_2] += 0.5
                         match_round.result_player_2 = match_round.result_player_1 = 0.5
                     elif result == 'Q':
+                        result = False
                         return
                     matchs.update({'result_player_2': match_round.result_player_2}, where('id') == match_round.id)
                     matchs.update({'result_player_1': match_round.result_player_1}, where('id') == match_round.id)
             tournaments.update({'scores' : unserialized_tournament.scores}, where('id') == id_tournament)
         if round_number == 4:
             tournaments.update({'finished' : True}, where('id') == id_tournament)
-            tournament_result = self.get_final_score(id_tournament)
+            tournament_result = self.sorted_by_score_rank(id_tournament)
             self.view.show_tournament_result(tournament_result)
-            return False
-        else:
-            return True
+            result = False
+        
+        
+        return result
 
 
     def get_list_tournaments_in_progress(self):
@@ -318,13 +331,13 @@ class Controller:
         return tournaments_in_progress
 
     def sort_players_by_names(self, players):
-        unserialized_players = self.unserialized_players(players)
+        unserialized_players = self.unserialize_players(players)
         sorted_player_by_names = sorted(
             unserialized_players, key = lambda player: player.last_name)
         return sorted_player_by_names
     
     def sort_players_rank_name(self, players):
-        unserialized_players = self.unserialized_players(players)
+        unserialized_players = self.unserialize_players(players)
         sorted_players_rank_name= sorted(
             unserialized_players, key=lambda player: (player.rank, player.last_name)
             )
@@ -357,19 +370,19 @@ class Controller:
                 id_tournament = self.view.select_tournament() 
                 result = True
                 while result :   
-                    round_number = self.load_tournament(id_tournament)
-                    result = self.load_round_tournament(id_tournament, round_number)
+                    result = self.load_tournament(id_tournament)
                 choix = self.view.show_tournament_menu()
                     
             elif choix == "13":
-                list_tournaments = self.unserialized_tournaments(tournaments)
+                list_tournaments = self.unserialize_tournaments(tournaments)
                 if not list_tournaments:
                     print("\nIl n'y a encore aucun tournoi d'enregistré!")
                 else:
                     for tournament in list_tournaments:
                         self.view.show_listing_all_tournaments(tournament)
-                        tournament_result = self.get_final_score(tournament.id)
-                        self.view.show_tournament_result(tournament_result)
+                        if tournament.finished == True:
+                            tournament_result = self.sorted_by_score_rank(tournament.id)
+                            self.view.show_tournament_result(tournament_result)
                 choix = self.view.show_tournament_menu()
             elif choix == "14":
                 tournaments_in_progress = self.get_list_tournaments_in_progress()
