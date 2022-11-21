@@ -30,7 +30,7 @@ class Controller:
         player = Player(id, first_name, last_name, sex, date_birthday, rank)
         self.db.add_element_to_db(player, 'players')
 
-    def unserialized_player(self, serialized_player):
+    def unserialize_player(self, serialized_player):
         """Unserialize a player"""
         id = serialized_player["id"]
         first_name = serialized_player["first_name"]
@@ -41,10 +41,10 @@ class Controller:
 
         return Player(id, first_name, last_name, sex, date_birthday, rank)
     
-    def unserialized_players(self, elements):
+    def unserialize_players(self, elements):
         unserialized_players = []
         for element in elements:
-            unserialized_players.append(self.unserialized_player(element))
+            unserialized_players.append(self.unserialize_player(element))
         return unserialized_players
 
     def create_tournament(self, detail):
@@ -74,7 +74,7 @@ class Controller:
 
         return tournament
 
-    def unserialized_tournament(self, serialized_tournament):
+    def unserialize_tournament(self, serialized_tournament):
         """Instance a new player"""
         id = serialized_tournament["id"]
         name = serialized_tournament["name"]
@@ -102,10 +102,10 @@ class Controller:
             finished,
         )
     
-    def unserialized_tournaments(self, elements):
+    def unserialize_tournaments(self, elements):
         unserialized_tournaments = []
         for element in elements:
-            unserialized_tournaments.append(self.unserialized_tournament(element))
+            unserialized_tournaments.append(self.unserialize_tournament(element))
         return unserialized_tournaments
 
     def create_round(self, round_number, tournament_id):
@@ -129,7 +129,7 @@ class Controller:
             id, number, id_tournament, datetime_beginning, datetime_end
         )
     
-    def unserialized_rounds(self, elements):
+    def unserialize_rounds(self, elements):
         unserialized_rounds = []
         for element in elements:
             unserialized_rounds.append(self.unserialize_round(element))
@@ -148,7 +148,7 @@ class Controller:
             id, id_round, id_player_1, id_player_2, result_player_1, result_player_2
         )
     
-    def unserialized_matchs(self, elements):
+    def unserialize_matchs(self, elements):
         unserialized_matchs = []
         for element in elements:
             unserialized_matchs.append(self.unserialize_match(element))
@@ -169,7 +169,7 @@ class Controller:
     def get_final_score(self, id_tournament):
         tournaments = self.db.get_table_from_db("tournaments")
         tournament = tournaments.search(where("id") == id_tournament)
-        unserialized_tournament = self.unserialized_tournament(tournament[0])
+        unserialized_tournament = self.unserialize_tournament(tournament[0])
         players_scores = []
         for i in range(0,8):
             players_scores.append((unserialized_tournament.players[i], unserialized_tournament.scores[i])) 
@@ -179,7 +179,7 @@ class Controller:
     def load_tournament(self, id_tournament):
         tournaments = self.db.get_table_from_db("tournaments")
         tournament = tournaments.search(where("id") == id_tournament)
-        unserialized_tournament = self.unserialized_tournament(tournament[0])
+        unserialized_tournament = self.unserialize_tournament(tournament[0])
         players = self.db.get_table_from_db('players') 
         list_players = []
         for player in players:
@@ -215,10 +215,15 @@ class Controller:
                 round_number, 
                 unserialized_tournament.id
             )
-            players_scores= []
+            players_scores_rank= []
             for i in range (0,8):
-                players_scores.append(( unserialized_tournament.players[i],unserialized_tournament.scores[i]))
-            sorted_players = sorted(players_scores, key=lambda score: score[1])
+                player = players.search(where("id") == unserialized_tournament.players[i])
+                unserialize_player= self.unserialize_player(player)
+                players_scores_rank.append(( 
+                    unserialized_tournament.players[i],
+                    unserialized_tournament.scores[i],
+                    unserialize_player.rank))
+            sorted_players = sorted(players_scores_rank, key=lambda player: (player[1], player[2]))
             rounds = self.get_tournament_rounds( id_tournament)
             all_matchs = []
             for round in rounds:   
@@ -296,7 +301,7 @@ class Controller:
                         return
                     matchs.update({'result_player_2': match_round.result_player_2}, where('id') == match_round.id)
                     matchs.update({'result_player_1': match_round.result_player_1}, where('id') == match_round.id)
-                    tournaments.update({'scores' : unserialized_tournament.scores}, where('id') == id_tournament)
+            tournaments.update({'scores' : unserialized_tournament.scores}, where('id') == id_tournament)
         if round_number == 4:
             tournaments.update({'finished' : True}, where('id') == id_tournament)
             tournament_result = self.get_final_score(id_tournament)
@@ -327,14 +332,14 @@ class Controller:
 
     def run(self):
         """Run the game."""
-        running = True
+        
         self.db.initialize_database()
         choix = self.view.prompt_principal_menu()
-        while running:
+        while True:
             players = self.db.get_table_from_db("players")
             tournaments = self.db.get_table_from_db("tournaments")
             if choix == "1":
-                choix = self.view.afficher_menu_tournoi()
+                choix = self.view.show_tournament_menu()
             elif choix == "11":
                 number = self.db.get_number_of_elements('players')
                 if number < 8:
@@ -342,19 +347,19 @@ class Controller:
                         "Attention, Il n'y a pas suffisamment de joueurs "
                         "inscrits pour débuter un tournoi"
                     )
-                    choix = self.view.afficher_menu_joueur()
+                    choix = self.view.show_player_menu()
                 else:
                     elements_tournament = self.view.create_tournament()
                     tournament = self.create_tournament(elements_tournament)
                     self.create_round(tournament.id)
-                    choix = self.view.afficher_menu_tournoi()
+                    choix = self.view.show_tournament_menu()
             elif choix == "12":
                 id_tournament = self.view.select_tournament() 
                 result = True
                 while result :   
                     round_number = self.load_tournament(id_tournament)
                     result = self.load_round_tournament(id_tournament, round_number)
-                choix = self.view.afficher_menu_tournoi()
+                choix = self.view.show_tournament_menu()
                     
             elif choix == "13":
                 list_tournaments = self.unserialized_tournaments(tournaments)
@@ -365,7 +370,7 @@ class Controller:
                         self.view.show_listing_all_tournaments(tournament)
                         tournament_result = self.get_final_score(tournament.id)
                         self.view.show_tournament_result(tournament_result)
-                choix = self.view.afficher_menu_tournoi()
+                choix = self.view.show_tournament_menu()
             elif choix == "14":
                 tournaments_in_progress = self.get_list_tournaments_in_progress()
                 list_tournaments = self.unserialized_tournaments(tournaments_in_progress)
@@ -373,7 +378,7 @@ class Controller:
                     print("\nIl n'y a pas de tournois en cours.")
                 else:
                     self.view.show_listing_all_tournaments(list_tournaments)
-                choix = self.view.afficher_menu_tournoi()
+                choix = self.view.show_tournament_menu()
             elif choix == "16":
                 id_tournament = self.view.select_tournament()
                 rounds = self.get_tournament_rounds(id_tournament)
@@ -390,23 +395,23 @@ class Controller:
                     print('\nIl n\'y aucun tours démarrés dans ce tournoi')
                 unserialized_rounds = self.unserialized_rounds(rounds)
                 self.view.show_listing_all_rounds_of_a_tournament(unserialized_rounds, id_tournament)
-                choix = self.view.afficher_menu_tournoi()
+                choix = self.view.show_tournament_menu()
             elif choix == "18":
                 return False
             elif choix == "2":
-                choix = self.view.afficher_menu_joueur()
+                choix = self.view.show_player_menu()
             elif choix == "21":
                 elements_player = self.view.add_player()
                 self.create_player(elements_player)
-                choix = self.view.afficher_menu_joueur()
+                choix = self.view.show_player_menu()
             elif choix == "22":
                 listing = self.sort_players_by_names(players)
-                self.view.affichage_liste_joueurs_alphabetique(listing)
-                choix = self.view.afficher_menu_joueur()
+                self.view.show_players_by_names(listing)
+                choix = self.view.show_player_menu()
             elif choix == "23":
                 listing = self.sort_players_rank_name(players)
-                self.view.affichage_liste_joueurs_classement(listing)
-                choix = self.view.afficher_menu_joueur()
+                self.view.show_players_by_ranks_names(listing)
+                choix = self.view.show_player_menu()
             elif choix == "24" or "17":
                 choix = self.view.prompt_principal_menu()
             elif choix == "3":
