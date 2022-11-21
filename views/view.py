@@ -19,7 +19,7 @@ class View:
         elements_player = [first_name, last_name, sex, date_birthday, rank]
         return elements_player
 
-    def afficher_menu_joueur(self):
+    def show_player_menu(self):
         print(
             "\n-------------------------------\n"
             "Menu Joueur:\n"
@@ -47,7 +47,7 @@ class View:
         choix = input("Entrez votre choix :")
         return choix
 
-    def afficher_menu_tournoi(self):
+    def show_tournament_menu(self):
         print(
             "\n-------------------------------\n"
             "Menu Tournoi:\n"
@@ -65,14 +65,14 @@ class View:
         choix = input("Entrez votre choix :")
         return choix
 
-    def affichage_liste_joueurs_alphabetique(self, players):
+    def show_players_by_names(self, players):
         self.players = players
         print("\n")
         print("Voici la liste des joueurs par ordre alphabétique : \n")
         for player in players:
             print(player)
 
-    def affichage_liste_joueurs_classement(self, players):
+    def show_players_by_ranks_names(self, players):
         self.players = players
 
         print("\nVoici la liste des joueurs par classemnt croissant : \n")
@@ -102,11 +102,7 @@ class View:
         return players
 
     def create_tournament(self):
-        print(
-            "\n-------------------------------\n"
-            "Créer un tournoi:\n"
-            "-------------------------------\n"
-        )
+        print("\n-------------------------------\n" "Créer un tournoi:\n" "-------------------------------\n")
         name = input("Nom du tournoi: ")
         place = input("Lieu du tournoi: ")
         date_beginning = input("Date du 1er jour: ")
@@ -137,9 +133,7 @@ class View:
         self.rounds = rounds
         self.id_tournament = id_tournament
 
-        print(
-            "\nVoici la liste des rounds du tournoi n:°",self.id_tournament,":\n"
-        )
+        print("\nVoici la liste des rounds du tournoi n:°", self.id_tournament, ":\n")
         for round in rounds:
             print(round)
 
@@ -147,21 +141,17 @@ class View:
         self.matchs = matchs
         for match in matchs:
             print(match)
-        
+
     def show_tournament_result(self, tournament_result):
         self.tournament_result = tournament_result
         print("Résultat:")
         print("Vainqueur: Joueur", tournament_result[0][0], " avec ", tournament_result[0][1], "points")
         print("Second: Joueur", tournament_result[1][0], " avec ", tournament_result[1][1], "points")
-        for i in range (2,8):
-            print("", i+1, "ème: Joueur",tournament_result[i][0], " avec ", tournament_result[i][1], "points")
+        for i in range(2, 8):
+            print("", i + 1, "ème: Joueur", tournament_result[i][0], " avec ", tournament_result[i][1], "points")
 
     def get_match_winner(self, match):
         self.match = match
-        print(
-            "\nVeuillez entrer le vainqueur du ", match,": "
-        )
-        choix = input(
-            "Joueur (1), Joueur (2), (E)galité, (Q)uitter:"
-        )
+        print("\nVeuillez entrer le vainqueur du ", match, ": ")
+        choix = input("Joueur (1), Joueur (2), (E)galité, (Q)uitter:")
         return choix
