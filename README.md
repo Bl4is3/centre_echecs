@@ -1,6 +1,6 @@
 # Logiciels de jeu d'échecs
 
-Bienvenue sur l'application de jeu d'échecs basée sur le système suisse.
+Bienvenue sur l'application de jeu d'échecs basée sur le système suisse.\n
 Ce jeu fonctionne en entièrement en local et peut etre utilisé sur les plateformes
 Windows, Mac ou Linux.
 Pour une utilisation optimale, merci de suivre le guide ci-dessous 
