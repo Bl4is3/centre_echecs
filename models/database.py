@@ -49,8 +49,9 @@ class Database:
 
     def get_element_in_table(self, id, table):
         """ Get an element from a table with id """
-        all_elements = self.db.get_table_from_db(table)
-        for element in all_elements:
+        all_elements = self.db.table(table)
+        elements = all_elements.all()
+        for element in elements:
             if element.doc_id == id:
                 result = element
         return result
@@ -59,7 +60,7 @@ class Database:
         """ Add an element in a table"""
         self.db.table(table).insert(element.serialize())
 
-    def update_element(self, element, table, field, value, reference):
+    def update_element(self, table, field, new_value, id_reference):
         """ Update an element with value in a table where field is reference"""
         elements = self.get_table_from_db(table)
-        elements.update({str(element): value}, where(field) == reference)
+        elements.update({str(field): new_value}, where('id') == id_reference)

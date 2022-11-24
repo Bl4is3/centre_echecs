@@ -10,7 +10,7 @@ class Tournament:
         timer,
         description,
         number_of_rounds=4,
-        rounds_ok=0,
+        rounds=[],
         finished=False,
     ):
         self.id = id
@@ -22,16 +22,16 @@ class Tournament:
         self.timer = timer
         self.description = description
         self.number_of_rounds = number_of_rounds
-        self.rounds_ok = rounds_ok
+        self.rounds = rounds
         self.finished = finished
 
     def __str__(self):
         """Used in print."""
         if self.finished is True:
-            statut = "fini"
+            statut = ""
         else:
-            statut = "en cours"
-        return f"{self.id} _ Tournoi {self.name} qui a débuté le {self.dates} à {self.place} ({statut})"
+            statut = "(en cours)"
+        return f"{self.id} _ Tournoi {self.name} qui a débuté le {self.dates} à {self.place} {statut}"
 
     def __repr__(self):
         """Used in print."""
@@ -49,7 +49,7 @@ class Tournament:
             "timer": self.timer,
             "description": self.description,
             "number_of_rounds": self.number_of_rounds,
-            "rounds_ok": self.rounds_ok,
+            "rounds": self.rounds,
             "finished": self.finished
         }
         return serialized_tournament
