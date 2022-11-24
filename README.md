@@ -1,9 +1,11 @@
 # Logiciels de jeu d'échecs
 
-Bienvenue sur l'application de jeu d'échecs basée sur le système suisse.\n
-Ce jeu fonctionne en entièrement en local et peut etre utilisé sur les plateformes
+Bienvenue sur l'application de jeu d'échecs basée sur le système suisse.
+
+Ce logiciel fonctionne entièrement en local et peut etre utilisé sur les plateformes
 Windows, Mac ou Linux.
-Pour une utilisation optimale, merci de suivre le guide ci-dessous 
+
+Pour une utilisation optimale, merci de suivre le guide ci-dessous.
 
 ### Procédure pour Linux:
 
@@ -35,7 +37,7 @@ python3 main.py
 
 ### Procédure pour générer un rapport Flake8:
 
-Positionnez-vous dans le répertoire du logiciel:
+Positionnez-vous dans le répertoire principal du logiciel:
 
 ```
 cd /centre_echecs
