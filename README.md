@@ -4,6 +4,7 @@ Bienvenue sur l'application de jeu d'échecs basée sur le système suisse.
 
 Ce logiciel fonctionne entièrement en local et peut etre utilisé sur les plateformes
 Windows, Mac ou Linux. 
+
 Pour travailler sur un système libre, nous vous recommandons d'utiliser Linux.
 
 Suivez le guide!
