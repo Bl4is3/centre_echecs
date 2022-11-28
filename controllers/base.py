@@ -278,7 +278,7 @@ class Controller:
     def get_list_tournaments_in_progress(self):
         """Get tournaments in progress"""
         tournaments = self.db.get_table_from_db("tournaments")
-        tournaments_in_progress = tournaments.search(where("finished") == False)
+        tournaments_in_progress = tournaments.search(where("finished") is False)
         return tournaments_in_progress
 
     def sort_players_by_names(self, players):
@@ -308,7 +308,7 @@ class Controller:
                     choix = self.view.show_player_menu()
                 else:
                     elements_tournament = self.view.create_tournament()
-                    tournament = self.create_tournament(elements_tournament)
+                    self.create_tournament(elements_tournament)
                     choix = self.view.show_tournament_menu()
             elif choix == "12":
                 id_tournament = self.view.select_tournament()

@@ -154,7 +154,7 @@ class View:
     def show_listing_all_tournaments(self, list_tournaments):
         self.list_tournaments = list_tournaments
         if not list_tournaments:
-                    print("\nIl n'y a pas de tournois en cours.")
+            print("\nIl n'y a pas de tournois en cours.")
         else:
             for tournament in list_tournaments:
                 print(tournament)
