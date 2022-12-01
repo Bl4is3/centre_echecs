@@ -84,8 +84,10 @@ class View:
             "13 - Afficher la liste de tous les tournois \n"
             "14 - Afficher la liste de tous les tours d'un tournoi\n"
             "15 - Afficher la liste de tous les matchs d'un tournoi\n"
-            "16 - Revenir au menu principal\n"
-            "17 - Sauvegarder et quitter\n"
+            "16 - Afficher la liste de tous les joueurs d'un tournoi par ordre alphabétique\n"
+            "17 - Afficher la liste de tous les joueurs d'un tournoi par classement\n"
+            "18 - Revenir au menu principal\n"
+            "19 - Sauvegarder et quitter\n"
         )
 
         choix = input("Entrez votre choix :")
