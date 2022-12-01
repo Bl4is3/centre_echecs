@@ -239,7 +239,6 @@ class Controller:
             round = self.unserialize_round(rounds[len(unserialized_tournament.rounds) - 1])
             result = self.verify_if_matchs_in_progress_in_round(round)
             if result:
-                print("in_progress)")
                 round.matchs, scores, resultat = self.run_matchs_round(
                     round.name, round.matchs, unserialized_tournament.id
                 )
@@ -249,7 +248,6 @@ class Controller:
                 if len(unserialized_tournament.rounds) == unserialized_tournament.number_of_rounds and not result:
                     unserialized_tournament.finished = True
                     tournaments.update({"finished": unserialized_tournament.finished}, where("id") == id_tournament)
-                    print("\nLe tournoi est terminé")
                     tournament_result = self.sorted_by_score_rank(id_tournament)
                     self.view.show_tournament_result(tournament_result)
                     resultat = False
